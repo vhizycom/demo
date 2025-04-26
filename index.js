@@ -26,6 +26,13 @@ app.post('/spinpay', async (req, res) => {
 
   client.on('end', () => {
     console.log('Disconnected from SpinPOS');
+    
+    if (!responseData.startsWith('<')) {
+      // Eğer XML değilse, standart bir hata XML'i döndür
+      res.set('Content-Type', 'text/xml');
+      return res.status(200).send(`<error><message>Invalid response from SpinPOS server</message></error>`);
+    }
+
     res.set('Content-Type', 'text/xml');
     res.status(200).send(responseData);
   });
